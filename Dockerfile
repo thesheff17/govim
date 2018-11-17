@@ -58,9 +58,9 @@ RUN  \
 	echo 'export GOPATH=/root/go/bin' >> /root/.bashrc && \
 	rm go1.11.2.linux-amd64.tar.gz
 
-# pathogen
-RUN mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-	curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+# directories & pathongen
+RUN mkdir -p ~/.vim/autoload ~/.vim/bundle ~/.vim/colors/ && \
+    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 
 # vim sensible
 RUN cd ~/.vim/bundle && \
@@ -71,8 +71,8 @@ RUN curl https://raw.githubusercontent.com/Shougo/neobundle.vim/master/bin/insta
   sh ./install.sh 
 
 # colors
-WORKDIR /root/.vim/colors/
-RUN wget https://raw.githubusercontent.com/shannonmoeller/vim-monokai256/master/colors/monokai256.vim
+RUN cd /root/.vim/colors/ && \
+    wget https://raw.githubusercontent.com/shannonmoeller/vim-monokai256/master/colors/monokai256.vim
 
 # vim-go
 RUN git clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go
@@ -83,6 +83,14 @@ RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubuserconte
 COPY vimrc /root/.vimrc 
 COPY bashrc /root/.bashrc
 
+# YouCompleteMe
+RUN cd /root/.vim/bundle/ && \
+    export PATH=$PATH:/usr/local/go/bin && \
+    git clone https://github.com/Valloric/YouCompleteMe.git && \
+    cd /root/.vim/bundle/YouCompleteMe && \
+    git submodule update --init --recursive && \
+    python3 install.py --clang-completer --go-completer
+    
 # install a bunch of required packages these need
 RUN vim +NeoBundleInstall +qall
 RUN export PATH=$PATH:/usr/local/go/bin && vim +'silent :GoInstallBinaries' +qall
