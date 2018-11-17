@@ -97,3 +97,11 @@ colors monokai256
 " fixes colors in tmux
 set background=dark
 set t_Co=256
+
+" load up the nerd tree
+autocmd vimenter * NERDTree
+
+" move nerdtree to the right
+let g:NERDTreeWinPos = "right"
+" " move to the first buffer
+autocmd VimEnter * wincmd p

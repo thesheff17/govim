@@ -98,6 +98,9 @@ RUN export PATH=$PATH:/usr/local/go/bin && vim +'silent :GoInstallBinaries' +qal
 # configuring external go scripts I use
 RUN export PATH=$PATH:/usr/local/go/bin && go get github.com/y0ssar1an/q
 
+# nerdtree
+RUN git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
+
 # sample script
 RUN mkdir /root/helloWorld/
 WORKDIR /root/helloWorld/
