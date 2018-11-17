@@ -93,3 +93,7 @@ let g:go_metalinter_autosave = 1
 let g:go_metalinter_deadline = "5s"
 
 colors monokai256
+
+" fixes colors in tmux
+set background=dark
+set t_Co=256

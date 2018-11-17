@@ -26,8 +26,8 @@ MAINTAINER Dan Sheffner <Dan@Sheffner.com>
 # IN THE SOFTWARE.
 
 # Docker container for golang development
-# time docker build . -t thesheff17:govim
-# docker run -it thesheff17:govim
+# time docker build . -t thesheff17/govim
+# docker run -it thesheff17/govim
 
 # helper ENV variables
 RUN apt-get clean && apt-get update && apt-get install -y locales
@@ -51,7 +51,7 @@ RUN \
 
 # golang
 RUN  \
-    wget https://dl.google.com/go/go1.11.2.linux-amd64.tar.gz && \
+    wget -q https://dl.google.com/go/go1.11.2.linux-amd64.tar.gz && \
     tar -C /usr/local -xzf go1.11.2.linux-amd64.tar.gz 	&& \
     echo 'export PATH=$PATH:/usr/local/go/bin' >> /root/.bashrc && \
     echo 'export GOBIN=/root/go/bin' >> /root/.bashrc && \
@@ -81,15 +81,23 @@ RUN git clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
 	git clone https://github.com/fatih/vim-go.git ~/.vim/plugged/vim-go
 COPY vimrc /root/.vimrc 
+COPY bashrc /root/.bashrc
 
+# install a bunch of required packages these need
 RUN vim +NeoBundleInstall +qall
 RUN export PATH=$PATH:/usr/local/go/bin && vim +'silent :GoInstallBinaries' +qall
+
+# configuring external go scripts I use
+RUN export PATH=$PATH:/usr/local/go/bin && go get github.com/y0ssar1an/q
 
 # sample script
 RUN mkdir /root/helloWorld/
 WORKDIR /root/helloWorld/
 COPY ./main.go .
 RUN /usr/local/go/bin/go build
+
+COPY ./start_tmux.sh /root/
+RUN chmod +x /root/start_tmux.sh
 WORKDIR /root/
 
-CMD ["/bin/bash"]
+CMD ["/root/start_tmux.sh"]
